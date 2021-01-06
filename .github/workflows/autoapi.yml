@@ -21,6 +21,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
+    
     - name: Set up Python #安装python
       uses: actions/setup-python@v1
       with:
@@ -30,12 +31,10 @@ jobs:
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+        restore-keys: ${{ runner.os }}-pip-
       
     - name: Install requests #安装requests
-      run: |
-        pip install requests
+      run: pip install requests
     
     - name: Read config from secrets  #读取机密
       env: 
@@ -59,14 +58,7 @@ jobs:
         rm -f configid.txt
         rm -f configkey.txt    
     
-    - name: Commit #上传新的refresh_token到仓库
-      run: |
-        git config --global user.email AutoupdateRobot@email.com
-        git config --global user.name AutoupdateRobot
-        git add .
-        git commit -m "update new refresh_token" -a
-    - name: Push changes
-      uses: ad-m/github-push-action@master
+    - name: Commit
+      uses: actions-go/push@master
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref }}
+        commit-message: update new refresh_token
